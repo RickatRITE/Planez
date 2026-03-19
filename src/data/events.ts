@@ -1,0 +1,580 @@
+import type { GameEvent, Era } from '../types';
+
+// ============================================================
+// PLANEZ REMAKE — EVENTS DATABASE
+// ============================================================
+
+export const gameEvents: GameEvent[] = [
+  // ----------------------------------------------------------
+  // ECONOMIC EVENTS
+  // ----------------------------------------------------------
+  {
+    id: 'global-recession',
+    title: 'Global Recession',
+    description:
+      'A worldwide economic downturn reduces air travel demand and tightens credit markets.',
+    category: 'economic',
+    effect: { demandMultiplier: 0.75, cashChange: -5 },
+    duration: 4,
+    remainingQuarters: 4,
+    probability: 0.04,
+    oneTime: false,
+    triggered: false,
+  },
+  {
+    id: 'asia-pacific-boom',
+    title: 'Asia-Pacific Economic Boom',
+    description:
+      'Rapid growth in the Asia-Pacific region drives a surge in business and leisure travel.',
+    category: 'economic',
+    effect: { demandMultiplier: 1.3 },
+    targetRegion: 'asia',
+    duration: 6,
+    remainingQuarters: 6,
+    probability: 0.05,
+    oneTime: false,
+    triggered: false,
+  },
+  {
+    id: 'european-expansion',
+    title: 'European Market Expansion',
+    description:
+      'Economic integration in Europe stimulates cross-border travel and opens new markets.',
+    category: 'economic',
+    effect: { demandMultiplier: 1.2 },
+    targetRegion: 'europe',
+    duration: 4,
+    remainingQuarters: 4,
+    probability: 0.05,
+    oneTime: false,
+    triggered: false,
+  },
+  {
+    id: 'oil-price-spike',
+    title: 'Oil Price Spike',
+    description:
+      'Geopolitical tensions cause crude oil prices to soar, dramatically increasing fuel costs.',
+    category: 'economic',
+    effect: { fuelCostMultiplier: 1.5 },
+    duration: 3,
+    remainingQuarters: 3,
+    probability: 0.06,
+    oneTime: false,
+    triggered: false,
+  },
+  {
+    id: 'oil-price-crash',
+    title: 'Oil Price Crash',
+    description:
+      'An oversupply of crude oil leads to plummeting prices, providing relief on fuel costs.',
+    category: 'economic',
+    effect: { fuelCostMultiplier: 0.7 },
+    duration: 3,
+    remainingQuarters: 3,
+    probability: 0.05,
+    oneTime: false,
+    triggered: false,
+  },
+  {
+    id: 'currency-volatility',
+    title: 'Currency Fluctuation',
+    description:
+      'Unstable exchange rates increase operating costs for international routes.',
+    category: 'economic',
+    effect: { maintenanceCostMultiplier: 1.15, demandMultiplier: 0.95 },
+    duration: 2,
+    remainingQuarters: 2,
+    probability: 0.07,
+    oneTime: false,
+    triggered: false,
+  },
+  {
+    id: 'inflation-surge',
+    title: 'Rising Inflation',
+    description:
+      'High inflation raises costs across the board — fuel, labor, and maintenance all climb.',
+    category: 'economic',
+    effect: { fuelCostMultiplier: 1.2, maintenanceCostMultiplier: 1.2 },
+    duration: 4,
+    remainingQuarters: 4,
+    probability: 0.04,
+    oneTime: false,
+    triggered: false,
+  },
+  {
+    id: 'interest-rate-hike',
+    title: 'Interest Rate Hike',
+    description:
+      'Central banks raise interest rates, increasing borrowing costs and dampening demand.',
+    category: 'economic',
+    effect: { demandMultiplier: 0.9, cashChange: -3 },
+    duration: 4,
+    remainingQuarters: 4,
+    probability: 0.05,
+    oneTime: false,
+    triggered: false,
+  },
+  {
+    id: 'latin-america-growth',
+    title: 'Latin American Growth Surge',
+    description:
+      'Commodity exports drive economic expansion across South America, boosting regional travel.',
+    category: 'economic',
+    effect: { demandMultiplier: 1.25 },
+    targetRegion: 'south_america',
+    duration: 4,
+    remainingQuarters: 4,
+    probability: 0.04,
+    oneTime: false,
+    triggered: false,
+  },
+  {
+    id: 'middle-east-investment-boom',
+    title: 'Middle East Investment Boom',
+    description:
+      'Sovereign wealth fund spending drives infrastructure development and business travel.',
+    category: 'economic',
+    effect: { demandMultiplier: 1.3, slotsChange: 5 },
+    targetRegion: 'middle_east',
+    duration: 6,
+    remainingQuarters: 6,
+    probability: 0.04,
+    oneTime: false,
+    triggered: false,
+  },
+
+  // ----------------------------------------------------------
+  // INDUSTRY EVENTS
+  // ----------------------------------------------------------
+  {
+    id: 'airport-expansion-tokyo',
+    title: 'Tokyo Airport Expansion',
+    description:
+      'A major expansion at Tokyo adds new terminal capacity and additional landing slots.',
+    category: 'industry',
+    effect: { slotsChange: 10 },
+    targetCityId: 'tokyo',
+    duration: 1,
+    remainingQuarters: 1,
+    probability: 0.03,
+    oneTime: true,
+    triggered: false,
+  },
+  {
+    id: 'airport-expansion-dubai',
+    title: 'Dubai Airport Expansion',
+    description:
+      'Dubai opens a massive new terminal, cementing its position as a global hub.',
+    category: 'industry',
+    effect: { slotsChange: 15 },
+    targetCityId: 'dubai',
+    duration: 1,
+    remainingQuarters: 1,
+    probability: 0.03,
+    oneTime: true,
+    triggered: false,
+  },
+  {
+    id: 'airport-expansion-london',
+    title: 'London Airport Expansion',
+    description:
+      'Heathrow finally receives approval for a new runway, increasing available slots.',
+    category: 'industry',
+    effect: { slotsChange: 8 },
+    targetCityId: 'london',
+    duration: 1,
+    remainingQuarters: 1,
+    probability: 0.03,
+    oneTime: true,
+    triggered: false,
+  },
+  {
+    id: 'airport-strike',
+    title: 'Airport Workers\' Strike',
+    description:
+      'Labor disputes at a major airport ground flights and reduce available slots for the quarter.',
+    category: 'industry',
+    effect: { slotsChange: -5, demandMultiplier: 0.85 },
+    targetRegion: 'europe',
+    duration: 1,
+    remainingQuarters: 1,
+    probability: 0.06,
+    oneTime: false,
+    triggered: false,
+  },
+  {
+    id: 'deregulation-wave',
+    title: 'Airline Deregulation',
+    description:
+      'Governments loosen aviation regulations, opening new routes but increasing competition.',
+    category: 'industry',
+    effect: { demandMultiplier: 1.15, slotsChange: 5 },
+    duration: 8,
+    remainingQuarters: 8,
+    probability: 0.03,
+    oneTime: true,
+    triggered: false,
+  },
+  {
+    id: 'bilateral-agreement-us-china',
+    title: 'US–China Open Skies Agreement',
+    description:
+      'A new bilateral agreement opens direct routes between the United States and China.',
+    category: 'industry',
+    effect: { demandMultiplier: 1.2, slotsChange: 5 },
+    targetRegion: 'asia',
+    duration: 8,
+    remainingQuarters: 8,
+    era: 3,
+    probability: 0.03,
+    oneTime: true,
+    triggered: false,
+  },
+  {
+    id: 'fuel-tech-breakthrough',
+    title: 'Fuel Technology Breakthrough',
+    description:
+      'A new synthetic jet fuel enters commercial production, reducing fuel costs industry-wide.',
+    category: 'industry',
+    effect: { fuelCostMultiplier: 0.8 },
+    duration: 8,
+    remainingQuarters: 8,
+    era: 4,
+    probability: 0.04,
+    oneTime: true,
+    triggered: false,
+  },
+  {
+    id: 'atc-modernization',
+    title: 'Air Traffic Control Modernization',
+    description:
+      'Next-generation ATC systems improve efficiency, reducing delays and fuel burn on routes.',
+    category: 'industry',
+    effect: { fuelCostMultiplier: 0.9, maintenanceCostMultiplier: 0.95 },
+    duration: 8,
+    remainingQuarters: 8,
+    era: 4,
+    probability: 0.03,
+    oneTime: true,
+    triggered: false,
+  },
+  {
+    id: 'aircraft-grounding-safety',
+    title: 'Fleet-Wide Safety Grounding',
+    description:
+      'Regulators order a specific aircraft type grounded after a safety investigation.',
+    category: 'industry',
+    effect: { demandMultiplier: 0.85, maintenanceCostMultiplier: 1.3 },
+    duration: 2,
+    remainingQuarters: 2,
+    probability: 0.03,
+    oneTime: false,
+    triggered: false,
+  },
+  {
+    id: 'noise-regulation-tightening',
+    title: 'Stricter Noise Regulations',
+    description:
+      'New noise restrictions force airlines to retire older, noisier aircraft sooner.',
+    category: 'industry',
+    effect: { maintenanceCostMultiplier: 1.2 },
+    duration: 8,
+    remainingQuarters: 8,
+    era: 3,
+    probability: 0.03,
+    oneTime: true,
+    triggered: false,
+  },
+
+  // ----------------------------------------------------------
+  // WORLD EVENTS
+  // ----------------------------------------------------------
+  {
+    id: 'olympics-tokyo',
+    title: 'Olympic Games — Tokyo',
+    description:
+      'The Summer Olympics in Tokyo attract millions of visitors, boosting demand across Asia.',
+    category: 'world',
+    effect: { demandMultiplier: 1.4 },
+    targetCityId: 'tokyo',
+    targetRegion: 'asia',
+    duration: 1,
+    remainingQuarters: 1,
+    probability: 0.08,
+    oneTime: true,
+    triggered: false,
+  },
+  {
+    id: 'olympics-london',
+    title: 'Olympic Games — London',
+    description:
+      'London hosts the Summer Olympics, driving a huge spike in European air travel.',
+    category: 'world',
+    effect: { demandMultiplier: 1.4 },
+    targetCityId: 'london',
+    targetRegion: 'europe',
+    duration: 1,
+    remainingQuarters: 1,
+    probability: 0.08,
+    oneTime: true,
+    triggered: false,
+  },
+  {
+    id: 'olympics-sydney',
+    title: 'Olympic Games — Sydney',
+    description:
+      'The Sydney Olympics put Australia on the map, bringing a wave of international travelers.',
+    category: 'world',
+    effect: { demandMultiplier: 1.4 },
+    targetCityId: 'sydney',
+    targetRegion: 'oceania',
+    duration: 1,
+    remainingQuarters: 1,
+    probability: 0.08,
+    oneTime: true,
+    triggered: false,
+  },
+  {
+    id: 'olympics-rio',
+    title: 'Olympic Games — Rio de Janeiro',
+    description:
+      'Rio hosts the Summer Olympics, drawing massive crowds to South America.',
+    category: 'world',
+    effect: { demandMultiplier: 1.4 },
+    targetCityId: 'rio',
+    targetRegion: 'south_america',
+    duration: 1,
+    remainingQuarters: 1,
+    probability: 0.08,
+    oneTime: true,
+    triggered: false,
+  },
+  {
+    id: 'world-cup',
+    title: 'FIFA World Cup',
+    description:
+      'The World Cup generates enormous travel demand as fans flock to the host nation.',
+    category: 'world',
+    effect: { demandMultiplier: 1.3 },
+    duration: 1,
+    remainingQuarters: 1,
+    probability: 0.06,
+    oneTime: false,
+    triggered: false,
+  },
+  {
+    id: 'world-expo',
+    title: 'World Expo',
+    description:
+      'A World Expo draws millions of visitors over several months, sustaining travel demand.',
+    category: 'world',
+    effect: { demandMultiplier: 1.2 },
+    duration: 2,
+    remainingQuarters: 2,
+    probability: 0.05,
+    oneTime: false,
+    triggered: false,
+  },
+  {
+    id: 'earthquake-disaster',
+    title: 'Major Earthquake',
+    description:
+      'A devastating earthquake disrupts infrastructure and reduces travel to the affected region.',
+    category: 'world',
+    effect: { demandMultiplier: 0.6, slotsChange: -5, cityAvailable: false },
+    targetRegion: 'asia',
+    duration: 2,
+    remainingQuarters: 2,
+    probability: 0.03,
+    oneTime: false,
+    triggered: false,
+  },
+  {
+    id: 'hurricane-season',
+    title: 'Severe Hurricane Season',
+    description:
+      'An unusually active hurricane season disrupts Caribbean and Gulf Coast flights.',
+    category: 'world',
+    effect: { demandMultiplier: 0.7, maintenanceCostMultiplier: 1.15 },
+    targetRegion: 'north_america',
+    duration: 1,
+    remainingQuarters: 1,
+    probability: 0.06,
+    oneTime: false,
+    triggered: false,
+  },
+  {
+    id: 'pandemic-scare',
+    title: 'Global Pandemic Scare',
+    description:
+      'A fast-spreading virus triggers travel restrictions and passenger fear worldwide.',
+    category: 'world',
+    effect: { demandMultiplier: 0.5 },
+    duration: 3,
+    remainingQuarters: 3,
+    probability: 0.02,
+    oneTime: false,
+    triggered: false,
+  },
+  {
+    id: 'political-crisis-mideast',
+    title: 'Middle East Political Crisis',
+    description:
+      'Escalating political tensions in the Middle East deter travel to the region.',
+    category: 'world',
+    effect: { demandMultiplier: 0.6, fuelCostMultiplier: 1.2 },
+    targetRegion: 'middle_east',
+    duration: 3,
+    remainingQuarters: 3,
+    probability: 0.04,
+    oneTime: false,
+    triggered: false,
+  },
+  {
+    id: 'tourism-renaissance',
+    title: 'Global Tourism Renaissance',
+    description:
+      'A worldwide surge in leisure travel as emerging middle classes take to the skies.',
+    category: 'world',
+    effect: { demandMultiplier: 1.2 },
+    duration: 4,
+    remainingQuarters: 4,
+    probability: 0.04,
+    oneTime: false,
+    triggered: false,
+  },
+  {
+    id: 'regional-conflict-africa',
+    title: 'Regional Conflict in Africa',
+    description:
+      'Armed conflict in parts of Africa closes airspace and deters regional travel.',
+    category: 'world',
+    effect: { demandMultiplier: 0.5, cityAvailable: false },
+    targetRegion: 'africa',
+    duration: 4,
+    remainingQuarters: 4,
+    probability: 0.03,
+    oneTime: false,
+    triggered: false,
+  },
+
+  // ----------------------------------------------------------
+  // COMPANY EVENTS
+  // ----------------------------------------------------------
+  {
+    id: 'crew-strike',
+    title: 'Pilot and Crew Strike',
+    description:
+      'Your pilots walk off the job demanding higher pay, grounding flights and angering passengers.',
+    category: 'company',
+    effect: { demandMultiplier: 0.6, reputationChange: -10, cashChange: -8 },
+    duration: 1,
+    remainingQuarters: 1,
+    probability: 0.04,
+    oneTime: false,
+    triggered: false,
+  },
+  {
+    id: 'safety-incident',
+    title: 'In-Flight Safety Incident',
+    description:
+      'A publicized safety scare damages your airline\'s reputation with the traveling public.',
+    category: 'company',
+    effect: { reputationChange: -15, demandMultiplier: 0.85 },
+    duration: 2,
+    remainingQuarters: 2,
+    probability: 0.03,
+    oneTime: false,
+    triggered: false,
+  },
+  {
+    id: 'airline-of-the-year',
+    title: 'Airline of the Year Award',
+    description:
+      'Your airline wins a prestigious industry award, boosting its brand and attracting passengers.',
+    category: 'company',
+    effect: { reputationChange: 15, demandMultiplier: 1.1 },
+    duration: 4,
+    remainingQuarters: 4,
+    probability: 0.03,
+    oneTime: false,
+    triggered: false,
+  },
+  {
+    id: 'safety-excellence-award',
+    title: 'Safety Excellence Recognition',
+    description:
+      'Regulators commend your spotless safety record, earning public trust.',
+    category: 'company',
+    effect: { reputationChange: 10 },
+    duration: 4,
+    remainingQuarters: 4,
+    probability: 0.04,
+    oneTime: false,
+    triggered: false,
+  },
+  {
+    id: 'government-subsidy',
+    title: 'Government Subsidy Offer',
+    description:
+      'The government offers a generous subsidy to support domestic route development.',
+    category: 'company',
+    effect: { cashChange: 20 },
+    duration: 1,
+    remainingQuarters: 1,
+    probability: 0.03,
+    oneTime: false,
+    triggered: false,
+  },
+  {
+    id: 'hostile-takeover-attempt',
+    title: 'Hostile Takeover Attempt',
+    description:
+      'A rival investor group launches a takeover bid, forcing costly defensive measures.',
+    category: 'company',
+    effect: { cashChange: -15, reputationChange: -5 },
+    duration: 2,
+    remainingQuarters: 2,
+    probability: 0.02,
+    oneTime: false,
+    triggered: false,
+  },
+  {
+    id: 'it-system-upgrade',
+    title: 'IT Systems Upgrade',
+    description:
+      'A major technology overhaul improves booking efficiency and reduces administrative costs.',
+    category: 'company',
+    effect: { maintenanceCostMultiplier: 0.9, reputationChange: 5 },
+    duration: 8,
+    remainingQuarters: 8,
+    probability: 0.03,
+    oneTime: true,
+    triggered: false,
+  },
+  {
+    id: 'cabin-refurbishment',
+    title: 'Fleet Cabin Refurbishment',
+    description:
+      'A fleet-wide cabin refresh impresses passengers and earns rave reviews.',
+    category: 'company',
+    effect: { reputationChange: 10, demandMultiplier: 1.1, cashChange: -10 },
+    duration: 4,
+    remainingQuarters: 4,
+    probability: 0.03,
+    oneTime: false,
+    triggered: false,
+  },
+];
+
+// ----------------------------------------------------------
+// HELPERS
+// ----------------------------------------------------------
+
+/**
+ * Returns all events available in a given era.
+ * Events with no era restriction are included in every era.
+ */
+export function getEventsForEra(era: Era): GameEvent[] {
+  return gameEvents.filter((event) => event.era === undefined || event.era === era);
+}
