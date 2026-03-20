@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useGameStore } from '../../store/gameStore';
 import { audioManager } from '../../utils/audioManager';
 import { motion } from 'framer-motion';
@@ -12,10 +12,13 @@ export default function ResultsOverlay() {
   const currentQuarter = useGameStore((s) => s.currentQuarter);
   const financialHistory = useGameStore((s) => s.financialHistory);
   const airlines = useGameStore((s) => s.airlines);
-  const currentPlayerIndex = useGameStore((s) => s.currentPlayerIndex);
   const nextTurn = useGameStore((s) => s.nextTurn);
 
-  const airline = airlines[currentPlayerIndex];
+  // Track which player's results we're viewing
+  const humanPlayers = airlines.filter((a) => a.playerType === 'human' && !a.eliminated);
+  const [viewingIndex, setViewingIndex] = useState(0);
+  const airline = humanPlayers[viewingIndex] ?? airlines[0];
+  const isLastPlayer = viewingIndex >= humanPlayers.length - 1;
 
   // Find the latest financial report for the current player
   const latestReport = [...financialHistory]
@@ -194,10 +197,17 @@ export default function ResultsOverlay() {
         {/* Footer */}
         <div className="px-6 py-4 border-t border-white/10 flex justify-end">
           <button
-            onClick={nextTurn}
+            onClick={() => {
+              if (isLastPlayer) {
+                setViewingIndex(0);
+                nextTurn();
+              } else {
+                setViewingIndex(viewingIndex + 1);
+              }
+            }}
             className="px-6 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-sm font-semibold tracking-wide transition-colors"
           >
-            Next Quarter
+            {isLastPlayer ? 'Next Quarter' : `Next Player's Results`}
           </button>
         </div>
       </motion.div>

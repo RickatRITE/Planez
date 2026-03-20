@@ -216,6 +216,25 @@ export const useGameStore = create<GameStore>()((set, get) => ({
   endTurn: () => {
     const state = get();
 
+    // Check if there's another human player who still needs to take their turn this quarter
+    const nextHumanIndex = state.airlines.findIndex(
+      (a, i) => i > state.currentPlayerIndex && a.playerType === 'human' && !a.eliminated
+    );
+
+    if (nextHumanIndex !== -1) {
+      // Advance to the next human player's turn
+      set({
+        currentPlayerIndex: nextHumanIndex,
+        activePanel: 'map',
+        selectedCityId: null,
+        selectedRouteId: null,
+        selectedAircraftId: null,
+      });
+      return;
+    }
+
+    // All human players have taken their turn — run AI and simulate
+
     // Build a mutable snapshot of the full game state for engine functions
     let gameState: GameState = {
       era: state.era,
@@ -254,10 +273,11 @@ export const useGameStore = create<GameStore>()((set, get) => ({
     // Run quarter simulation
     gameState = simulateQuarter(gameState);
 
-    // Move to results phase
+    // Move to results phase — reset to player 0 so all players see results
     set({
       ...gameState,
       phase: 'results',
+      currentPlayerIndex: 0,
     });
   },
 
