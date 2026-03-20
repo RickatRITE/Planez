@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { useGameStore } from '../../store/gameStore';
+import { audioManager } from '../../utils/audioManager';
 import { motion } from 'framer-motion';
 
 function formatMoney(value: number): string {
@@ -24,6 +26,16 @@ export default function ResultsOverlay() {
     })[0];
 
   const eliminatedAirlines = airlines.filter((a) => a.eliminated);
+
+  // Play sound based on quarterly profit/loss
+  useEffect(() => {
+    if (!latestReport) return;
+    if (latestReport.profit >= 0) {
+      audioManager.playWinning();
+    } else {
+      audioManager.playBadEvent();
+    }
+  }, [latestReport]);
 
   return (
     <motion.div

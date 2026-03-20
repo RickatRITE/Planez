@@ -1,6 +1,21 @@
+import { useEffect } from 'react';
 import { useGameStore } from '../../store/gameStore';
+import { audioManager } from '../../utils/audioManager';
 import { motion } from 'framer-motion';
-import type { EventCategory } from '../../types';
+import type { EventCategory, GameEvent } from '../../types';
+
+function isNegativeEvent(event: GameEvent): boolean {
+  const e = event.effect;
+  let score = 0;
+  if (e.demandMultiplier != null) score += e.demandMultiplier < 1 ? -1 : e.demandMultiplier > 1 ? 1 : 0;
+  if (e.fuelCostMultiplier != null) score += e.fuelCostMultiplier > 1 ? -1 : e.fuelCostMultiplier < 1 ? 1 : 0;
+  if (e.maintenanceCostMultiplier != null) score += e.maintenanceCostMultiplier > 1 ? -1 : e.maintenanceCostMultiplier < 1 ? 1 : 0;
+  if (e.reputationChange != null) score += e.reputationChange < 0 ? -1 : e.reputationChange > 0 ? 1 : 0;
+  if (e.cashChange != null) score += e.cashChange < 0 ? -1 : e.cashChange > 0 ? 1 : 0;
+  if (e.slotsChange != null) score += e.slotsChange < 0 ? -1 : e.slotsChange > 0 ? 1 : 0;
+  if (e.cityAvailable === false) score -= 1;
+  return score < 0;
+}
 
 const categoryBadge: Record<EventCategory, { icon: string; color: string }> = {
   economic: { icon: '\u{1F4C8}', color: 'bg-emerald-500/20 text-emerald-300 ring-emerald-400/30' },
@@ -53,6 +68,15 @@ export default function NewsOverlay() {
   const currentQuarter = useGameStore((s) => s.currentQuarter);
   const newsQueue = useGameStore((s) => s.newsQueue);
   const dismissNews = useGameStore((s) => s.dismissNews);
+
+  // Play sound effects based on event sentiment
+  useEffect(() => {
+    if (newsQueue.length === 0) return;
+    const hasNegative = newsQueue.some(isNegativeEvent);
+    const hasPositive = newsQueue.some((e) => !isNegativeEvent(e));
+    if (hasNegative) audioManager.playBadEvent();
+    if (hasPositive) audioManager.playWinning();
+  }, [newsQueue]);
 
   return (
     <motion.div
